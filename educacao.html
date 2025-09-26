@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aula Seminário — Educação para toda a alma</title>
+  <meta name="description" content="Plano de aula baseado em 'Educação para toda a alma' — lição do Manual do Seminário (Doutrina e Convênios). Blocos temáticos, atividades, recursos e notas do professor." />
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#6ee7b7; --muted:#94a3b8; --glass: rgba(255,255,255,0.03);
+      --maxw:1000px; --radius:14px; --gap:18px; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071023 0%,#081428 60%);color:#e6eef8;-webkit-font-smoothing:antialiased}
+    .wrap{max-width:var(--maxw);margin:28px auto;padding:22px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:18px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+    header{display:flex;gap:16px;align-items:center}
+    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#7dd3fc);display:flex;align-items:center;justify-content:center;font-weight:700;color:#06202a}
+    h1{margin:0;font-size:1.6rem}
+    p.lead{margin:6px 0 18px;color:var(--muted)}
+
+    nav.toc{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+    nav.toc a{background:var(--glass);padding:8px 12px;border-radius:12px;text-decoration:none;color:var(--accent);font-weight:600;font-size:0.9rem}
+
+    .grid{display:grid;grid-template-columns:1fr 340px;gap:var(--gap)}
+    main{background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:18px;border-radius:12px}
+    aside{position:sticky;top:24px;height:max-content;padding:14px;background:rgba(255,255,255,0.02);border-radius:12px}
+
+    section.block{margin-bottom:18px;padding:14px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.02);border-radius:12px}
+    section.block h2{margin:0 0 8px;font-size:1.05rem;color:#fff}
+    section.block p{margin:0 0 10px;color:var(--muted);line-height:1.5}
+
+    .activities ul{margin:10px 0 0;padding-left:18px;color:var(--muted)}
+    .note{background:linear-gradient(90deg, rgba(110,231,183,0.06), rgba(125,211,252,0.03));padding:10px;border-radius:10px;border-left:4px solid var(--accent);color:#cfeee4}
+
+    .accordion{margin-top:8px}
+    .acc-item{border-radius:10px;overflow:hidden;margin-bottom:8px}
+    .acc-item button{width:100%;text-align:left;padding:12px;background:transparent;border:0;color:var(--accent);font-weight:700;cursor:pointer}
+    .acc-body{padding:12px;background:rgba(255,255,255,0.01);color:var(--muted);display:none}
+
+    footer{margin-top:16px;padding:12px;text-align:center;color:var(--muted);font-size:0.9rem}
+
+    /* responsive */
+    @media (max-width:900px){.grid{grid-template-columns:1fr}.aside{order:2}.wrap{margin:8px}}
+
+    /* print-friendly */
+    @media print{body{color:#000;background:#fff} .wrap{box-shadow:none} nav.toc, aside{display:none}}
+
+    /* subtle animations */
+    .fade-in{animation:fade 600ms ease both}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+    /* teacher quick checklist */
+    .checklist{display:flex;flex-direction:column;gap:8px}
+    .chip{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;font-weight:600;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap fade-in">
+    <header>
+      <div class="logo">AS</div>
+      <div>
+        <h1>Aula: Educação para toda a alma</h1>
+        <p class="lead">Lição 192 — Buscar educação espiritual e secular. Plano dividido em blocos com atividades, recursos e notas do professor.</p>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Navegação rápida">
+      <a href="#intro">Introdução</a>
+      <a href="#importancia">Importância do aprendizado</a>
+      <a href="#atividades">Atividades</a>
+      <a href="#se-options">Opções do SEI</a>
+      <a href="#planejamento">Planejamento pessoal</a>
+      <a href="#estudo-habilidades">Competências & habilidades</a>
+      <a href="#recursos">Recursos</a>
+    </nav>
+
+    <div class="grid">
+      <main>
+        <section id="intro" class="block">
+          <h2>Introdução — Contexto da lição</h2>
+          <p>Apresente a ideia central: o Senhor convida-nos a buscar conhecimento espiritual e secular para estarmos preparados em todas as coisas. Essa lição ajuda os alunos a criar um plano que combine fé e educação acadêmica.</p>
+          <div class="note">Objetivo da aula: motivar os jovens a priorizar aprendizado espiritual sem desvalorizar estudos acadêmicos, mostrando benefícios práticos e eternos.</div>
+        </section>
+
+        <section id="importancia" class="block">
+          <h2>A importância do aprendizado espiritual e secular</h2>
+          <p>Explique como os textos (Doutrina e Convênios) ensinam que o conhecimento deve ser amplo: espiritual para orientação e secular para servir ao próximo. Use citações-chaves em classe (leitura guiada) para destacar instruções práticas.</p>
+        </section>
+
+        <section id="atividades" class="block activities">
+          <h2>Atividades sugeridas</h2>
+          <p>Concentre-se em atividades interativas que convidem ao diálogo e reflexões práticas.</p>
+          <ul>
+            <li>Discussão de abertura: "Por que alguém reservaria tempo para o seminário?" (perguntas guiadas)</li>
+            <li>Leitura em grupo de Doutrina e Convênios 88:78–80; 118 e 29:34 e identificação de conselhos do Senhor.</li>
+            <li>Estudo de caso: comparar trajetórias (instituições do SEI) e decidir qual seria mais adequada para cada caso.</li>
+            <li>Atividade de planejamento: criar um "mapa de educação" pessoal (metas 1, 3 e 5 anos).</li>
+          </ul>
+        </section>
+
+        <section id="se-options" class="block">
+          <h2>Opções de educação religiosa (Sistema Educacional da Igreja)</h2>
+          <p>Apresente aos alunos as opções do SEI: Instituto de religião, BYU–Pathway Worldwide, BYU–Idaho, BYU–Havaí, Ensign College e outras. Mostre como avaliar cada instituição com base nas necessidades pessoais (flexibilidade, custo, rigor acadêmico, mentoria).</p>
+
+          <div class="accordion" aria-hidden="false">
+            <div class="acc-item">
+              <button type="button" onclick="toggleAcc(this)">Como ajudar alunos a escolher</button>
+              <div class="acc-body">Forneça um questionário rápido (ex.: 'Preciso de flexibilidade?', 'Tenho recursos financeiros?', 'Busco turmas menores?') e oriente com estudos de caso reais.</div>
+            </div>
+          </div>
+        </section>
+
+        <section id="planejamento" class="block">
+          <h2>Planejamento pessoal e busca por orientação</h2>
+          <p>Ensine os alunos a buscar orientação do Espírito para decidir sobre opções educacionais e de carreira. Incentive orações específicas e conversas com mentores (pais, professores, líderes locais).</p>
+          <p class="note">Dica prática: peça que cada aluno escreva uma oração curta pedindo ajuda para discernir a próxima etapa educacional.</p>
+        </section>
+
+        <section id="estudo-habilidades" class="block">
+          <h2>Desenvolver competências e habilidades</h2>
+          <p>Explique a importância de desenvolver habilidades práticas (comunicação, organização, competências técnicas) que complementem o aprendizado espiritual. Proponha atividades para identificar pontos fortes e habilidades.</p>
+        </section>
+
+        <section id="recursos" class="block">
+          <h2>Recursos e materiais complementares</h2>
+          <p>Lista de recursos a usar em aula: vídeos informativos do SEI, material complementar impresso, depoimentos de alunos e professores do instituto local, e links para mais estudo.</p>
+          <ul>
+            <li>Vídeo sugerido: "The Growth and Momentum of the Church Educational System" (mostrar em sala)</li>
+            <li>Material complementar: "Sistema Educacional da Igreja" e "Qual instituição do SEI é ideal para mim?"</li>
+            <li>Estudos de caso locais: convidar representante do instituto</li>
+          </ul>
+        </section>
+
+        <section id="fechamento" class="block">
+          <h2>Fechamento — Atividade de síntese</h2>
+          <p>Peça aos alunos que compartilhem um compromisso prático: uma ação que vão tomar nas próximas duas semanas para equilibrar estudo espiritual e secular (ex.: reservar 15 minutos diários para estudo espiritual relacionado aos estudos acadêmicos).</p>
+        </section>
+
+      </main>
+
+      <aside class="aside">
+        <div class="chip">Tempo sugerido: 45–60 min</div>
+        <div style="height:12px"></div>
+
+        <div class="block">
+          <h3>Checklist do professor</h3>
+          <div class="checklist">
+            <div class="chip">Preparar cópias do questionário SEI</div>
+            <div class="chip">Organizar vídeo e material complementar</div>
+            <div class="chip">Convidar um representante do instituto (se possível)</div>
+            <div class="chip">Exercício: mapa de educação pessoal (folha A4)</div>
+          </div>
+        </div>
+
+        <div class="block">
+          <h3>Notas rápidas</h3>
+          <p class="muted" style="color:var(--muted)">Foque no equilíbrio: priorizar espiritual sem desvalorizar o secular. Mostre exemplos práticos e locais para tornar concreto.</p>
+        </div>
+
+        <div class="block">
+          <h3>Atividades em casa</h3>
+          <ul style="color:var(--muted);padding-left:18px">
+            <li>Completar o mapa de educação pessoal</li>
+            <li>Pesquisar uma instituição do SEI e trazer informações</li>
+            <li>Orar e escrever uma meta educacional</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      Plano de aula baseado no manual do Seminário — lição "Educação para toda a alma". Use este arquivo como modelo e adapte conforme sua área e cultura local.
+    </footer>
+  </div>
+
+  <script>
+    function toggleAcc(btn){
+      const body = btn.nextElementSibling;
+      if(!body) return;
+      const open = body.style.display === 'block';
+      document.querySelectorAll('.acc-body').forEach(b=>b.style.display='none');
+      body.style.display = open ? 'none' : 'block';
+    }
+  </script>
+</body>
+</html>
