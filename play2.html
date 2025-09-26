@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jogos Interativos — Educação para toda a alma</title>
+  <style>
+    body{font-family:Inter,system-ui,sans-serif;background:#0f1724;color:#e6eef8;margin:0;padding:20px}
+    h1{text-align:center;color:#6ee7b7}
+    section{margin:20px auto;max-width:950px;padding:20px;background:rgba(255,255,255,0.04);border-radius:14px;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
+    h2{color:#7dd3fc}
+    button{background:#6ee7b7;color:#06202a;font-weight:600;border:0;padding:10px 16px;border-radius:10px;cursor:pointer;margin-top:10px}
+    button:hover{opacity:0.9}
+    .question{margin:12px 0;font-weight:600}
+    .options button{display:block;width:100%;margin:6px 0;text-align:left}
+    .feedback{margin-top:8px;font-weight:600}
+    .correct{color:#6ee7b7}
+    .wrong{color:#f87171}
+    .flashcard{padding:14px;background:rgba(255,255,255,0.05);border-radius:12px;text-align:center;cursor:pointer;margin:8px 0;transition:transform .2s}
+    .flashcard:hover{transform:scale(1.02)}
+    .hidden{display:none}
+    .memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+    .card{background:#1e293b;padding:30px;border-radius:12px;text-align:center;cursor:pointer}
+    .matched{background:#6ee7b7;color:#06202a}
+    .drag-container{display:flex;gap:20px;justify-content:center;margin-top:20px}
+    .dropzone{flex:1;min-height:150px;padding:10px;border:2px dashed #7dd3fc;border-radius:12px}
+    .draggable{background:#334155;padding:8px;margin:5px;border-radius:8px;cursor:grab}
+  </style>
+</head>
+<body>
+  <h1>Jogos Interativos — Educação para toda a alma</h1>
+
+  <!-- Quiz -->
+  <section id="quiz">
+    <h2>Jogo 1: Quiz com Pontuação</h2>
+    <div id="quiz-container"></div>
+    <button onclick="finishQuiz()">Finalizar Quiz</button>
+    <div id="score" class="feedback"></div>
+  </section>
+
+  <!-- Flashcards -->
+  <section id="flashcards">
+    <h2>Jogo 2: Flashcards</h2>
+    <p>Clique no cartão para revelar a resposta.</p>
+    <div class="flashcard" onclick="toggleCard(this)">
+      <div class="front\">“Educação espiritual nos ajuda a ...”</div>
+      <div class="back hidden\">... receber revelação e viver o evangelho diariamente.</div>
+    </div>
+    <div class="flashcard" onclick="toggleCard(this)">
+      <div class="front\">“Educação secular nos capacita a ...”</div>
+      <div class="back hidden\">... servir melhor na sociedade e sustentar nossa família.</div>
+    </div>
+    <div class="flashcard" onclick="toggleCard(this)">
+      <div class="front\">“O Senhor deseja que busquemos ...”</div>
+      <div class="back hidden\">... conhecimento de todas as coisas (DyC 88:78–80).</div>
+    </div>
+  </section>
+
+  <!-- Memória -->
+  <section id="memory">
+    <h2>Jogo 3: Memória — Conecte ideias</h2>
+    <div class="memory-grid" id="memory-grid"></div>
+    <div id="memory-feedback" class="feedback"></div>
+  </section>
+
+  <!-- Arrastar e soltar -->
+  <section id="dragdrop">
+    <h2>Jogo 4: Classificação — Espiritual ou Secular?</h2>
+    <p>Arraste as frases para a coluna correta.</p>
+    <div class="drag-container">
+      <div class="dropzone" id="espiritual"><h3>Espiritual</h3></div>
+      <div class="dropzone" id="secular"><h3>Secular</h3></div>
+    </div>
+    <div id="drag-feedback" class="feedback"></div>
+  </section>
+
+  <script>
+    // QUIZ
+    const questions = [
+      {q:\"Por que a educação é vital?\", options:[\"Nos prepara espiritual e temporalmente.\",\"Apenas garante dinheiro.\",\"Substitui revelação.\"], correct:0},
+      {q:\"Segundo DyC 88:78, devemos ensinar...\", options:[\"Somente matemática.\",\"Todas as coisas espirituais e temporais.\",\"Apenas doutrina básica.\"], correct:1},
+      {q:\"DyC 29:34 ensina que...\", options:[\"Todas as coisas para Deus são espirituais.\",\"As coisas seculares não importam.\",\"O mundo governa tudo.\"], correct:0},
+      {q:\"O equilíbrio correto é...\", options:[\"Estudar só escola.\",\"Buscar espiritual e secular em harmonia.\",\"Ignorar estudos.\"], correct:1},
+      {q:\"Educação espiritual traz...\", options:[\"Revelação e fé.\",\"Somente conhecimento técnico.\",\"Riqueza imediata.\"], correct:0},
+      {q:\"Educação secular ajuda...\", options:[\"Servir sociedade e sustentar família.\",\"Substituir oração.\",\"Evitar serviço.\"], correct:0},
+      {q:\"DyC 88:80 convida a...\", options:[\"Preparar-se para servir em missões e chamada.\",\"Evitar responsabilidade.\",\"Estudar apenas negócios.\"], correct:0},
+      {q:\"Qual é o propósito do SEI?\", options:[\"Formar discípulos e profissionais.\",\"Somente emitir diplomas.\",\"Ganhar dinheiro.\"], correct:0},
+      {q:\"Que princípio o Senhor reforça em DyC 118?\", options:[\"Discípulos devem buscar sabedoria.\",\"Sabedoria não importa.\",\"Somente líderes estudam.\"], correct:0},
+      {q:\"O estudo espiritual deve ser...\", options:[\"Constante e diário.\",\"Somente domingo.\",\"Nunca necessário.\"], correct:0},
+    ];
+    let score=0;
+    const quizContainer=document.getElementById(\"quiz-container\");
+    questions.forEach((item,i)=>{
+      const div=document.createElement(\"div\");div.classList.add(\"question\");div.textContent=(i+1)+\". \"+item.q;
+      quizContainer.appendChild(div);
+      const optDiv=document.createElement(\"div\");optDiv.classList.add(\"options\");
+      item.options.forEach((opt,idx)=>{const btn=document.createElement(\"button\");btn.textContent=opt;btn.onclick=()=>{if(idx===item.correct){score++;btn.style.background='#6ee7b7'}else{btn.style.background='#f87171'};Array.from(optDiv.children).forEach(b=>b.disabled=true);};optDiv.appendChild(btn);});
+      quizContainer.appendChild(optDiv);
+    });
+    function finishQuiz(){document.getElementById(\"score\").textContent=\"Você acertou \"+score+\" de \"+questions.length+\"!\";}
+
+    // FLASHCARDS
+    function toggleCard(card){const front=card.querySelector('.front');const back=card.querySelector('.back');front.classList.toggle('hidden');back.classList.toggle('hidden');}
+
+    // MEMÓRIA
+    const pairs=[['DyC 88:78','Buscar conhecimento espiritual'],['DyC 29:34','Todas as coisas são espirituais'],['Educação secular','Servir sociedade'],['Educação espiritual','Receber revelação']];
+    let memoryCards=[...pairs.flat()], selected=[], matched=0;
+    memoryCards=memoryCards.sort(()=>Math.random()-0.5);
+    const grid=document.getElementById('memory-grid');
+    memoryCards.forEach(text=>{const c=document.createElement('div');c.className='card';c.textContent='?';c.dataset.value=text;c.onclick=()=>flipCard(c);grid.appendChild(c);});
+    function flipCard(card){if(card.textContent!=='?'||selected.length===2)return;card.textContent=card.dataset.value;selected.push(card);if(selected.length===2){setTimeout(checkPair,700);}}
+    function checkPair(){const[a,b]=selected;if(pairs.some(p=>(p.includes(a.dataset.value)&&p.includes(b.dataset.value)&&a.dataset.value!==b.dataset.value))){a.className='card matched';b.className='card matched';matched++;document.getElementById('memory-feedback').textContent='Pares encontrados: '+matched;}else{a.textContent='?';b.textContent='?';}selected=[];}
+
+    // DRAG & DROP
+    const frases=[{text:'Orar antes de estudar',cat:'espiritual'},{text:'Aprender matemática',cat:'secular'},{text:'Estudar escrituras',cat:'espiritual'},{text:'Aprender profissão',cat:'secular'}];
+    frases.forEach(f=>{const d=document.createElement('div');d.className='draggable';d.textContent=f.text;d.draggable=true;d.dataset.cat=f.cat;d.ondragstart=e=>e.dataTransfer.setData('text',f.text);document.body.querySelector('#dragdrop').appendChild(d);});
+    document.querySelectorAll('.dropzone').forEach(zone=>{zone.ondragover=e=>e.preventDefault();zone.ondrop=e=>{e.preventDefault();const text=e.dataTransfer.getData('text');const item=frases.find(f=>f.text===text);if(item.cat===zone.id){zone.appendChild(document.querySelector('[data-cat][textContent=\"'+text+'\"]')||document.querySelector('.draggable:contains(\"'+text+'\")'));document.getElementById('drag-feedback').textContent='✔ Correto: '+text;}else{document.getElementById('drag-feedback').textContent='✘ Tente novamente.';}};});
+  </script>
+</body>
+</html>
