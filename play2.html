@@ -1,120 +1,575 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jogos Interativos — Educação para toda a alma</title>
-  <style>
-    body{font-family:Inter,system-ui,sans-serif;background:#0f1724;color:#e6eef8;margin:0;padding:20px}
-    h1{text-align:center;color:#6ee7b7}
-    section{margin:20px auto;max-width:950px;padding:20px;background:rgba(255,255,255,0.04);border-radius:14px;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
-    h2{color:#7dd3fc}
-    button{background:#6ee7b7;color:#06202a;font-weight:600;border:0;padding:10px 16px;border-radius:10px;cursor:pointer;margin-top:10px}
-    button:hover{opacity:0.9}
-    .question{margin:12px 0;font-weight:600}
-    .options button{display:block;width:100%;margin:6px 0;text-align:left}
-    .feedback{margin-top:8px;font-weight:600}
-    .correct{color:#6ee7b7}
-    .wrong{color:#f87171}
-    .flashcard{padding:14px;background:rgba(255,255,255,0.05);border-radius:12px;text-align:center;cursor:pointer;margin:8px 0;transition:transform .2s}
-    .flashcard:hover{transform:scale(1.02)}
-    .hidden{display:none}
-    .memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
-    .card{background:#1e293b;padding:30px;border-radius:12px;text-align:center;cursor:pointer}
-    .matched{background:#6ee7b7;color:#06202a}
-    .drag-container{display:flex;gap:20px;justify-content:center;margin-top:20px}
-    .dropzone{flex:1;min-height:150px;padding:10px;border:2px dashed #7dd3fc;border-radius:12px}
-    .draggable{background:#334155;padding:8px;margin:5px;border-radius:8px;cursor:grab}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jogos Interativos — Educação para toda a alma</title>
+<style>
+  :root{
+    --bg:#071023; --card:#0b1420; --accent:#6ee7b7; --accent2:#7dd3fc; --muted:#94a3b8;
+    --w:1100px; --radius:12px; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#061226,#071a33);color:#e6eef8;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--w);margin:18px auto;padding:18px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));box-shadow:0 12px 30px rgba(2,6,23,0.6)}
+  header{display:flex;align-items:center;gap:16px}
+  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#012125}
+  h1{margin:0;font-size:1.4rem}
+  p.lead{margin:6px 0 12px;color:var(--muted)}
+
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:12px}
+  main{min-height:520px}
+  aside{position:sticky;top:22px;padding:14px;background:rgba(255,255,255,0.02);border-radius:10px}
+
+  section.card{background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);padding:14px;border-radius:10px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.02)}
+  h2{margin:0 0 8px;color:var(--accent2)}
+  .small{color:var(--muted);font-size:0.9rem}
+
+  /* Quiz */
+  #quiz .q-text{font-weight:700;margin:10px 0}
+  .options{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .opt-btn{padding:10px 12px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:var(--muted);text-align:left;cursor:pointer;font-weight:700}
+  .opt-btn.correct{background:linear-gradient(90deg,var(--accent),#dffaf0);color:#042b22}
+  .opt-btn.wrong{background:linear-gradient(90deg,#fca5a5,#fb7185);color:#3b0404}
+  .opt-btn:disabled{opacity:0.85;cursor:default}
+  .controls{display:flex;gap:8px;align-items:center;margin-top:12px}
+  .btn{background:var(--accent);color:#042b22;padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .progress{font-weight:700;color:var(--muted)}
+
+  /* modal */
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:60}
+  .modal{background:#071826;padding:18px;border-radius:12px;max-width:720px;width:92%;box-shadow:0 8px 40px rgba(2,6,23,0.8)}
+  .modal h3{margin:0 0 8px}
+  .modal p{color:var(--muted);line-height:1.5}
+  .modal .link{margin-top:10px;display:inline-block;color:var(--accent2);font-weight:700}
+
+  /* flashcards */
+  .flashcard{padding:16px;border-radius:12px;background:rgba(255,255,255,0.03);cursor:pointer;margin:10px 0;text-align:center}
+  .flashcard .back{display:none}
+  .flashcard.revealed{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#052322}
+
+  /* memory */
+  .memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+  .memory-card{background:#0c1824;padding:16px;border-radius:10px;text-align:center;cursor:pointer;user-select:none;border:1px solid rgba(255,255,255,0.02)}
+  .memory-card.revealed{background:linear-gradient(90deg,var(--accent),#cdefe6);color:#03221a}
+  .memory-card.matched{background:#6ee7b7;color:#052322;cursor:default}
+
+  /* drag & drop */
+  .drag-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .draggable{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.03);cursor:grab}
+  .dropzones{display:flex;gap:12px;margin-top:12px}
+  .dropzone{flex:1;min-height:120px;padding:10px;border-radius:10px;border:2px dashed rgba(125,211,252,0.12);background:rgba(255,255,255,0.01)}
+  .dropzone.ok{border-color:rgba(110,231,183,0.6)}
+  .dropzone.wrong{border-color:rgba(248,113,113,0.6)}
+
+  /* scores */
+  .score{font-weight:800;color:var(--accent);font-size:0.95rem}
+
+  /* responsive */
+  @media (max-width:980px){
+    .grid{grid-template-columns:1fr}
+    .memory-grid{grid-template-columns:repeat(3,1fr)}
+  }
+  @media (max-width:640px){
+    .memory-grid{grid-template-columns:repeat(2,1fr)}
+    .drag-row{justify-content:center}
+  }
+</style>
 </head>
 <body>
-  <h1>Jogos Interativos — Educação para toda a alma</h1>
+  <div class="wrap">
+    <header>
+      <div class="logo">AS</div>
+      <div>
+        <h1>Jogos — Educação para toda a alma</h1>
+        <p class="lead small">Quiz, flashcards, memória e classificação — projetados para ensinar equilíbrio entre educação espiritual e secular.</p>
+      </div>
+    </header>
 
-  <!-- Quiz -->
-  <section id="quiz">
-    <h2>Jogo 1: Quiz com Pontuação</h2>
-    <div id="quiz-container"></div>
-    <button onclick="finishQuiz()">Finalizar Quiz</button>
-    <div id="score" class="feedback"></div>
-  </section>
+    <div class="grid">
+      <main>
 
-  <!-- Flashcards -->
-  <section id="flashcards">
-    <h2>Jogo 2: Flashcards</h2>
-    <p>Clique no cartão para revelar a resposta.</p>
-    <div class="flashcard" onclick="toggleCard(this)">
-      <div class="front\">“Educação espiritual nos ajuda a ...”</div>
-      <div class="back hidden\">... receber revelação e viver o evangelho diariamente.</div>
+        <!-- QUIZ -->
+        <section id="quiz" class="card">
+          <h2>Quiz (10 perguntas) — Pontuação em tempo real</h2>
+          <p class="small">Responda cada pergunta. Clique em "Próxima" depois de responder. Ao final, verá seu resultado e o detalhamento.</p>
+
+          <div id="quiz-card">
+            <div class="q-head">
+              <span id="q-num" class="progress">Pergunta 1/10</span>
+              <span style="float:right" id="quiz-score" class="score">Pontos: 0</span>
+            </div>
+            <p id="q-text" class="q-text">Carregando...</p>
+            <div id="q-options" class="options"></div>
+
+            <div class="controls">
+              <button id="citationBtn" class="btn secondary" style="display:none">Ver citação</button>
+              <button id="nextBtn" class="btn" disabled>Próxima</button>
+              <button id="finishBtn" class="btn secondary" style="margin-left:auto">Finalizar agora</button>
+            </div>
+          </div>
+
+          <div id="quiz-result" class="card" style="display:none;margin-top:12px"></div>
+        </section>
+
+        <!-- FLASHCARDS -->
+        <section id="flashcards" class="card">
+          <h2>Flashcards</h2>
+          <p class="small">Clique em cada cartão para virar.</p>
+          <div id="flash-container">
+            <!-- dynamically filled -->
+          </div>
+        </section>
+
+        <!-- MEMORY -->
+        <section id="memory" class="card">
+          <h2>Memória — Combine pares</h2>
+          <p class="small">Clique em dois cartões para encontrar o par correspondente.</p>
+          <div id="memory-grid" class="memory-grid"></div>
+          <div style="margin-top:8px">
+            <span id="memory-status" class="small">Pares encontrados: 0</span>
+            <span style="float:right" id="memory-score" class="score">Pontos: 0</span>
+          </div>
+        </section>
+
+        <!-- CLASSIFICATION -->
+        <section id="classify" class="card">
+          <h2>Classificação — Espiritual ou Secular</h2>
+          <p class="small">Arraste (desktop) ou toque para selecionar e depois toque na coluna alvo (celular).</p>
+
+          <div id="pool" class="drag-row"></div>
+
+          <div class="dropzones" style="margin-top:12px">
+            <div id="espiritual" class="dropzone">
+              <h3 style="margin:4px 0 8px;color:var(--accent2)">Espiritual</h3>
+            </div>
+            <div id="secular" class="dropzone">
+              <h3 style="margin:4px 0 8px;color:var(--accent)">Secular</h3>
+            </div>
+          </div>
+
+          <div style="margin-top:10px">
+            <span id="classify-score" class="score">Pontos: 0</span>
+            <span id="classify-feedback" class="small" style="margin-left:12px;color:var(--muted)"></span>
+          </div>
+        </section>
+
+      </main>
+
+      <aside>
+        <section class="card">
+          <h3>Resumo de Pontuação</h3>
+          <p class="small">Acompanhe seu desempenho por jogo.</p>
+          <ul class="small">
+            <li>Quiz: <span id="aside-quiz" class="score">0</span></li>
+            <li>Memória: <span id="aside-memory" class="score">0</span></li>
+            <li>Classificação: <span id="aside-classify" class="score">0</span></li>
+          </ul>
+          <div style="margin-top:12px">
+            <strong>Total: </strong><span id="aside-total" class="score">0</span>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>Instruções rápidas</h3>
+          <p class="small">Use o Quiz para avaliação; Flashcards para revisão; Memória para reforçar conexões; Classificação para distinguir princípios espirituais e seculares.</p>
+          <p class="small">Citações abrem uma pequena explicação (paráfrase) e link para o manual oficial.</p>
+        </section>
+      </aside>
     </div>
-    <div class="flashcard" onclick="toggleCard(this)">
-      <div class="front\">“Educação secular nos capacita a ...”</div>
-      <div class="back hidden\">... servir melhor na sociedade e sustentar nossa família.</div>
-    </div>
-    <div class="flashcard" onclick="toggleCard(this)">
-      <div class="front\">“O Senhor deseja que busquemos ...”</div>
-      <div class="back hidden\">... conhecimento de todas as coisas (DyC 88:78–80).</div>
-    </div>
-  </section>
+  </div>
 
-  <!-- Memória -->
-  <section id="memory">
-    <h2>Jogo 3: Memória — Conecte ideias</h2>
-    <div class="memory-grid" id="memory-grid"></div>
-    <div id="memory-feedback" class="feedback"></div>
-  </section>
-
-  <!-- Arrastar e soltar -->
-  <section id="dragdrop">
-    <h2>Jogo 4: Classificação — Espiritual ou Secular?</h2>
-    <p>Arraste as frases para a coluna correta.</p>
-    <div class="drag-container">
-      <div class="dropzone" id="espiritual"><h3>Espiritual</h3></div>
-      <div class="dropzone" id="secular"><h3>Secular</h3></div>
+  <!-- modal for citations -->
+  <div id="modalBack" class="modal-back" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Citação</h3>
+      <p id="modalText" class="small"></p>
+      <a id="modalLink" class="link" href="#" target="_blank" rel="noopener">Abrir no manual (site da Igreja)</a>
+      <div style="margin-top:12px;text-align:right">
+        <button class="btn" onclick="closeModal()">Fechar</button>
+      </div>
     </div>
-    <div id="drag-feedback" class="feedback"></div>
-  </section>
+  </div>
 
-  <script>
-    // QUIZ
-    const questions = [
-      {q:\"Por que a educação é vital?\", options:[\"Nos prepara espiritual e temporalmente.\",\"Apenas garante dinheiro.\",\"Substitui revelação.\"], correct:0},
-      {q:\"Segundo DyC 88:78, devemos ensinar...\", options:[\"Somente matemática.\",\"Todas as coisas espirituais e temporais.\",\"Apenas doutrina básica.\"], correct:1},
-      {q:\"DyC 29:34 ensina que...\", options:[\"Todas as coisas para Deus são espirituais.\",\"As coisas seculares não importam.\",\"O mundo governa tudo.\"], correct:0},
-      {q:\"O equilíbrio correto é...\", options:[\"Estudar só escola.\",\"Buscar espiritual e secular em harmonia.\",\"Ignorar estudos.\"], correct:1},
-      {q:\"Educação espiritual traz...\", options:[\"Revelação e fé.\",\"Somente conhecimento técnico.\",\"Riqueza imediata.\"], correct:0},
-      {q:\"Educação secular ajuda...\", options:[\"Servir sociedade e sustentar família.\",\"Substituir oração.\",\"Evitar serviço.\"], correct:0},
-      {q:\"DyC 88:80 convida a...\", options:[\"Preparar-se para servir em missões e chamada.\",\"Evitar responsabilidade.\",\"Estudar apenas negócios.\"], correct:0},
-      {q:\"Qual é o propósito do SEI?\", options:[\"Formar discípulos e profissionais.\",\"Somente emitir diplomas.\",\"Ganhar dinheiro.\"], correct:0},
-      {q:\"Que princípio o Senhor reforça em DyC 118?\", options:[\"Discípulos devem buscar sabedoria.\",\"Sabedoria não importa.\",\"Somente líderes estudam.\"], correct:0},
-      {q:\"O estudo espiritual deve ser...\", options:[\"Constante e diário.\",\"Somente domingo.\",\"Nunca necessário.\"], correct:0},
-    ];
-    let score=0;
-    const quizContainer=document.getElementById(\"quiz-container\");
-    questions.forEach((item,i)=>{
-      const div=document.createElement(\"div\");div.classList.add(\"question\");div.textContent=(i+1)+\". \"+item.q;
-      quizContainer.appendChild(div);
-      const optDiv=document.createElement(\"div\");optDiv.classList.add(\"options\");
-      item.options.forEach((opt,idx)=>{const btn=document.createElement(\"button\");btn.textContent=opt;btn.onclick=()=>{if(idx===item.correct){score++;btn.style.background='#6ee7b7'}else{btn.style.background='#f87171'};Array.from(optDiv.children).forEach(b=>b.disabled=true);};optDiv.appendChild(btn);});
-      quizContainer.appendChild(optDiv);
+<script>
+/* =========================
+   Dados do Quiz & Citações
+   ========================= */
+
+const manualUrl = "https://www.churchofjesuschrist.org/study/manual/doctrine-and-covenants-seminary-teacher-manual-2025/582-education-for-the-whole-soul?lang=por";
+
+const citations = {
+  "D&C 88:78–80": {
+    title: "Doutrina e Convênios 88:78–80 (paráfrase)",
+    text: "O Senhor incentiva que busquemos aprendizado tanto espiritual quanto temporal — estudar 'todas as coisas' para que possamos edificá-Lo e servir com sabedoria.",
+    url: manualUrl
+  },
+  "D&C 29:34": {
+    title: "Doutrina e Convênios 29:34 (paráfrase)",
+    text: "Nos lembra que muitas coisas são espirituais em seu significado e que o conhecimento espiritual importa em todas as áreas da vida.",
+    url: manualUrl
+  },
+  "D&C 118": {
+    title: "Doutrina e Convênios 118 (paráfrase)",
+    text: "Ensina sobre o papel dos discípulos em buscar sabedoria e instrução para edificar o reino e servir ao próximo.",
+    url: manualUrl
+  }
+};
+
+const quizQuestions = [
+  { q: "Por que a educação é vital segundo o manual?", options:["Prepara-nos espiritual e temporalmente para servir.","Garante só sucesso financeiro.","Substitui a revelação."], correct:0, cite:"D&C 88:78–80" },
+
+  { q: "O que D&C 88:78–80 incentiva?", options:["Buscar aprendizado espiritual e secular.","Focar apenas em assuntos religiosos.","Evitar estudo secular."], correct:0, cite:"D&C 88:78–80" },
+
+  { q: "D&C 29:34 chama atenção para:", options:["O valor do conhecimento espiritual em todas as coisas.","A irrelevância da educação.","Somente assuntos temporais."], correct:0, cite:"D&C 29:34" },
+
+  { q: "Qual é o equilíbrio certo entre estudos?", options:["Harmonia entre espiritual e secular.","Só estudos seculares.","Só estudos espirituais."], correct:0 },
+
+  { q: "A educação secular ajuda a:", options:["Servir na sociedade e sustentar a família.","Evitar responsabilidades espirituais.","Substituir oração."], correct:0 },
+
+  { q: "A educação espiritual ajuda a:", options:["Receber revelação e aplicar princípios do evangelho.","Ficar distante do mundo.","Garantir riqueza."], correct:0 },
+
+  { q: "Qual objetivo do Sistema Educacional da Igreja (SEI)?", options:["Formar discípulos bem-educados e preparados para servir.","Emitir diplomas apenas.","Fazer lucro."], correct:0 },
+
+  { q: "Como um aluno deve decidir sua formação?", options:["Com oração, conselho e estudo prático.","Só por moda.","Só pelo que os amigos escolhem."], correct:0 },
+
+  { q: "D&C 118 reforça que discípulos devem:", options:["Buscar sabedoria e instrução.","Ignorar educação.","Viver sem aprendizado."], correct:0, cite:"D&C 118" },
+
+  { q: "Qual hábito ajuda tanto no espiritual quanto no secular?", options:["Estudo diário e reflexão.","Assistir TV.","Procrastinar."], correct:0 }
+];
+
+/* =========================
+   Estados e Helpers — QUIZ
+   ========================= */
+let quizIndex = 0;
+let quizScore = 0;
+const userAnswers = new Array(quizQuestions.length).fill(null);
+
+const qNumEl = document.getElementById('q-num');
+const qTextEl = document.getElementById('q-text');
+const qOptionsEl = document.getElementById('q-options');
+const nextBtn = document.getElementById('nextBtn');
+const finishBtn = document.getElementById('finishBtn');
+const citationBtn = document.getElementById('citationBtn');
+const quizScoreEl = document.getElementById('quiz-score');
+const quizResultEl = document.getElementById('quiz-result');
+
+function renderQuestion(i){
+  const item = quizQuestions[i];
+  qNumEl.textContent = `Pergunta ${i+1}/${quizQuestions.length}`;
+  qTextEl.textContent = item.q;
+  qOptionsEl.innerHTML = '';
+  citationBtn.style.display = item.cite ? 'inline-block' : 'none';
+  citationBtn.onclick = () => openCitation(item.cite);
+
+  item.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectOption(i, idx, btn);
+    qOptionsEl.appendChild(btn);
+  });
+
+  nextBtn.disabled = true;
+}
+
+function selectOption(questionIndex, optionIndex, btn){
+  // prevent double select
+  if (userAnswers[questionIndex] !== null) return;
+
+  const item = quizQuestions[questionIndex];
+  const buttons = Array.from(qOptionsEl.querySelectorAll('.opt-btn'));
+  userAnswers[questionIndex] = optionIndex;
+
+  buttons.forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === item.correct) b.classList.add('correct');
+  });
+
+  if (optionIndex === item.correct){
+    btn.classList.add('correct');
+    quizScore++;
+    quizScoreEl.textContent = `Pontos: ${quizScore}`;
+    document.getElementById('aside-quiz').textContent = quizScore;
+    updateTotal();
+  } else {
+    btn.classList.add('wrong');
+    // show which was correct
+    buttons[item.correct].classList.add('correct');
+  }
+
+  nextBtn.disabled = false;
+}
+
+nextBtn.addEventListener('click', () => {
+  quizIndex++;
+  if (quizIndex >= quizQuestions.length) {
+    finishQuiz();
+  } else {
+    renderQuestion(quizIndex);
+  }
+});
+
+finishBtn.addEventListener('click', finishQuiz);
+
+function finishQuiz(){
+  // show result summary
+  quizResultEl.style.display = 'block';
+  const total = quizQuestions.length;
+  const percent = Math.round((quizScore / total) * 100);
+  let html = `<h3>Resultado: ${quizScore} / ${total} (${percent}%)</h3>`;
+  html += '<div class="small"><strong>Detalhamento:</strong><ol>';
+  quizQuestions.forEach((q, i) => {
+    const ua = userAnswers[i];
+    const userText = ua === null ? '<em>Sem resposta</em>' : q.options[ua];
+    const correctText = q.options[q.correct];
+    const ok = ua === q.correct;
+    html += `<li style="margin-bottom:8px"><strong>P${i+1}:</strong> ${q.q}<br><em>Sua resposta:</em> ${userText} ${ok ? '✅' : '❌'}<br><em>Certa:</em> ${correctText}`;
+    if (q.cite) html += ` <button class="btn secondary" style="margin-left:6px" onclick="openCitation('${q.cite}')">Ver citação</button>`;
+    html += '</li>';
+  });
+  html += '</ol></div>';
+  quizResultEl.innerHTML = html;
+
+  // lock quiz UI
+  qOptionsEl.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  nextBtn.disabled = true;
+
+  // update aside and total
+  document.getElementById('aside-quiz').textContent = quizScore;
+  updateTotal();
+  // scroll to result
+  quizResultEl.scrollIntoView({behavior:'smooth'});
+}
+
+/* =========================
+   Modal for citations
+   ========================= */
+const modalBack = document.getElementById('modalBack');
+function openCitation(key){
+  if (!key || !citations[key]) return;
+  const c = citations[key];
+  document.getElementById('modalTitle').textContent = c.title;
+  document.getElementById('modalText').textContent = c.text;
+  const link = document.getElementById('modalLink');
+  link.href = c.url;
+  link.textContent = 'Abrir no manual';
+  modalBack.style.display = 'flex';
+  modalBack.setAttribute('aria-hidden','false');
+}
+function closeModal(){
+  modalBack.style.display = 'none';
+  modalBack.setAttribute('aria-hidden','true');
+}
+modalBack.addEventListener('click', (e)=>{ if(e.target === modalBack) closeModal(); });
+
+/* =========================
+   Inicializa QUIZ
+   ========================= */
+renderQuestion(0);
+
+/* =========================
+   Flashcards
+   ========================= */
+const flashcards = [
+  {front: 'Educação espiritual nos ajuda a...', back: '...receber revelação e aplicar o evangelho diariamente.'},
+  {front: 'Educação secular nos capacita a...', back: '...servir na sociedade e sustentar a família.'},
+  {front: 'Proposta do manual:', back: 'Equilibrar aprendizagem espiritual e temporal para servir com sabedoria.'},
+];
+
+const flashContainer = document.getElementById('flash-container');
+flashcards.forEach(f=>{
+  const el = document.createElement('div');
+  el.className = 'flashcard';
+  el.innerHTML = `<div class="front">${f.front}</div><div class="back small">${f.back}</div>`;
+  el.onclick = () => {
+    el.classList.toggle('revealed');
+    const back = el.querySelector('.back');
+    back.style.display = el.classList.contains('revealed') ? 'block' : 'none';
+  };
+  flashContainer.appendChild(el);
+});
+
+/* =========================
+   Memory game
+   ========================= */
+const memoryPairs = [
+  ['D&C 88:78–80','Buscar conhecimento espiritual e temporal'],
+  ['D&C 29:34','Valor do conhecimento espiritual'],
+  ['Educação secular','Servir na sociedade'],
+  ['Educação espiritual','Receber revelação'],
+];
+let memoryDeck = [];
+memoryPairs.forEach((p, idx) => {
+  memoryDeck.push({pairId: idx, text: p[0]});
+  memoryDeck.push({pairId: idx, text: p[1]});
+});
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+memoryDeck = shuffle(memoryDeck);
+
+const memoryGrid = document.getElementById('memory-grid');
+let memSelected = [];
+let memMatched = 0;
+let memoryPoints = 0;
+
+memoryDeck.forEach((card, i) => {
+  const el = document.createElement('div');
+  el.className = 'memory-card';
+  el.dataset.index = i;
+  el.dataset.pair = card.pairId;
+  el.textContent = '?';
+  el.onclick = () => {
+    if (el.classList.contains('revealed') || el.classList.contains('matched')) return;
+    revealCard(el, card.text);
+  };
+  memoryGrid.appendChild(el);
+});
+
+function revealCard(el, text){
+  if (memSelected.length >=2) return;
+  el.classList.add('revealed');
+  el.textContent = text;
+  memSelected.push(el);
+  if (memSelected.length === 2){
+    setTimeout(checkMemoryPair, 700);
+  }
+}
+
+function checkMemoryPair(){
+  const [a,b] = memSelected;
+  if (a.dataset.pair === b.dataset.pair && a !== b){
+    a.classList.add('matched'); b.classList.add('matched');
+    memMatched++;
+    memoryPoints += 10; // each match = 10 pontos
+    document.getElementById('memory-status').textContent = `Pares encontrados: ${memMatched}`;
+    document.getElementById('memory-score').textContent = `Pontos: ${memoryPoints}`;
+    document.getElementById('aside-memory').textContent = memoryPoints;
+    updateTotal();
+    if (memMatched === memoryPairs.length) {
+      // all matched
+      setTimeout(()=> alert('Parabéns — você encontrou todos os pares!'), 250);
+    }
+  } else {
+    a.classList.remove('revealed'); b.classList.remove('revealed');
+    a.textContent='?'; b.textContent='?';
+  }
+  memSelected = [];
+}
+
+/* =========================
+   Classificação (drag & click)
+   ========================= */
+const classifyItems = [
+  {id:1, text:'Orar antes de estudar', cat:'espiritual'},
+  {id:2, text:'Aprender matemática', cat:'secular'},
+  {id:3, text:'Estudar escrituras', cat:'espiritual'},
+  {id:4, text:'Aprender uma profissão', cat:'secular'},
+  {id:5, text:'Participar de ministrações', cat:'espiritual'},
+  {id:6, text:'Fazer curso técnico', cat:'secular'}
+];
+
+let classifyScore = 0;
+let selectedItemId = null; // for mobile/touch fallback
+
+const pool = document.getElementById('pool');
+const spiritualZone = document.getElementById('espiritual');
+const secularZone = document.getElementById('secular');
+
+function renderPool(){
+  pool.innerHTML = '';
+  classifyItems.forEach(it=>{
+    const el = document.createElement('div');
+    el.className = 'draggable';
+    el.textContent = it.text;
+    el.draggable = true;
+    el.dataset.id = it.id;
+    el.dataset.cat = it.cat;
+    // drag events
+    el.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', it.id);
     });
-    function finishQuiz(){document.getElementById(\"score\").textContent=\"Você acertou \"+score+\" de \"+questions.length+\"!\";}
+    // click/select for touch
+    el.addEventListener('click', () => {
+      // toggle selection
+      const prev = pool.querySelector('.draggable.selected');
+      if (prev && prev !== el) prev.classList.remove('selected');
+      el.classList.toggle('selected');
+      selectedItemId = el.classList.contains('selected') ? it.id : null;
+    });
+    pool.appendChild(el);
+  });
+}
+renderPool();
 
-    // FLASHCARDS
-    function toggleCard(card){const front=card.querySelector('.front');const back=card.querySelector('.back');front.classList.toggle('hidden');back.classList.toggle('hidden');}
+// dragover/drop for zones
+[spiritualZone, secularZone].forEach(zone=>{
+  zone.addEventListener('dragover', (e) => e.preventDefault());
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const id = e.dataTransfer.getData('text/plain');
+    handleDrop(id, zone.id);
+  });
+  // click to drop (mobile fallback)
+  zone.addEventListener('click', () => {
+    if (selectedItemId) handleDrop(String(selectedItemId), zone.id);
+  });
+});
 
-    // MEMÓRIA
-    const pairs=[['DyC 88:78','Buscar conhecimento espiritual'],['DyC 29:34','Todas as coisas são espirituais'],['Educação secular','Servir sociedade'],['Educação espiritual','Receber revelação']];
-    let memoryCards=[...pairs.flat()], selected=[], matched=0;
-    memoryCards=memoryCards.sort(()=>Math.random()-0.5);
-    const grid=document.getElementById('memory-grid');
-    memoryCards.forEach(text=>{const c=document.createElement('div');c.className='card';c.textContent='?';c.dataset.value=text;c.onclick=()=>flipCard(c);grid.appendChild(c);});
-    function flipCard(card){if(card.textContent!=='?'||selected.length===2)return;card.textContent=card.dataset.value;selected.push(card);if(selected.length===2){setTimeout(checkPair,700);}}
-    function checkPair(){const[a,b]=selected;if(pairs.some(p=>(p.includes(a.dataset.value)&&p.includes(b.dataset.value)&&a.dataset.value!==b.dataset.value))){a.className='card matched';b.className='card matched';matched++;document.getElementById('memory-feedback').textContent='Pares encontrados: '+matched;}else{a.textContent='?';b.textContent='?';}selected=[];}
+function handleDrop(idStr, zoneId){
+  const id = Number(idStr);
+  const item = classifyItems.find(x=>x.id===id);
+  if (!item) return;
+  // find the element in pool or already in zones
+  let el = pool.querySelector(`[data-id="${id}"]`);
+  if (!el) {
+    // maybe already moved, find anywhere
+    el = document.querySelector(`.draggable[data-id="${id}"]`);
+  }
+  if (!el) return;
 
-    // DRAG & DROP
-    const frases=[{text:'Orar antes de estudar',cat:'espiritual'},{text:'Aprender matemática',cat:'secular'},{text:'Estudar escrituras',cat:'espiritual'},{text:'Aprender profissão',cat:'secular'}];
-    frases.forEach(f=>{const d=document.createElement('div');d.className='draggable';d.textContent=f.text;d.draggable=true;d.dataset.cat=f.cat;d.ondragstart=e=>e.dataTransfer.setData('text',f.text);document.body.querySelector('#dragdrop').appendChild(d);});
-    document.querySelectorAll('.dropzone').forEach(zone=>{zone.ondragover=e=>e.preventDefault();zone.ondrop=e=>{e.preventDefault();const text=e.dataTransfer.getData('text');const item=frases.find(f=>f.text===text);if(item.cat===zone.id){zone.appendChild(document.querySelector('[data-cat][textContent=\"'+text+'\"]')||document.querySelector('.draggable:contains(\"'+text+'\")'));document.getElementById('drag-feedback').textContent='✔ Correto: '+text;}else{document.getElementById('drag-feedback').textContent='✘ Tente novamente.';}};});
-  </script>
+  // prevent moving if already placed and locked
+  if (el.dataset.locked === 'true') return;
+
+  // check correctness
+  const correct = item.cat === zoneId;
+  if (correct){
+    zone.appendChild(el);
+    el.style.background = 'linear-gradient(90deg,var(--accent),var(--accent2))';
+    el.style.color = '#042b22';
+    el.dataset.locked = 'true';
+    classifyScore += 5;
+    document.getElementById('classify-feedback').textContent = `✔ Correto: "${item.text}"`;
+    document.getElementById('classify-score').textContent = `Pontos: ${classifyScore}`;
+    document.getElementById('aside-classify').textContent = classifyScore;
+    updateTotal();
+  } else {
+    // brief feedback animation
+    zone.classList.add('wrong');
+    setTimeout(()=> zone.classList.remove('wrong'), 600);
+    document.getElementById('classify-feedback').textContent = `✘ Tente novamente: "${item.text}"`;
+  }
+  // clear selection
+  const prevSel = pool.querySelector('.draggable.selected');
+  if (prevSel) prevSel.classList.remove('selected');
+  selectedItemId = null;
+}
+
+/* =========================
+   Utility: atualiza total
+   ========================= */
+function updateTotal(){
+  const total = quizScore + memoryPoints + classifyScore;
+  document.getElementById('aside-total').textContent = total;
+}
+
+/* =========================
+   Inicializações finais
+   ========================= */
+document.getElementById('aside-quiz').textContent = quizScore;
+document.getElementById('aside-memory').textContent = memoryPoints;
+document.getElementById('aside-classify').textContent = classifyScore;
+updateTotal();
+
+</script>
 </body>
 </html>
