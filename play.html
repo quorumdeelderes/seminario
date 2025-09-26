@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jogos Interativos — Educação para toda a alma</title>
+  <style>
+    body{font-family:Inter,system-ui,sans-serif;background:#0f1724;color:#e6eef8;margin:0;padding:20px}
+    h1{text-align:center;color:#6ee7b7}
+    section{margin:20px auto;max-width:900px;padding:20px;background:rgba(255,255,255,0.04);border-radius:14px;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
+    h2{color:#7dd3fc}
+    button{background:#6ee7b7;color:#06202a;font-weight:600;border:0;padding:10px 16px;border-radius:10px;cursor:pointer;margin-top:10px}
+    button:hover{opacity:0.9}
+    .question{margin:12px 0;font-weight:600}
+    .options button{display:block;width:100%;margin:6px 0;text-align:left}
+    .feedback{margin-top:10px;font-weight:600}
+    .correct{color:#6ee7b7}
+    .wrong{color:#f87171}
+    .flashcard{padding:14px;background:rgba(255,255,255,0.05);border-radius:12px;text-align:center;cursor:pointer;margin:8px 0;transition:transform .2s}
+    .flashcard:hover{transform:scale(1.02)}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <h1>Jogos Interativos — Educação</h1>
+
+  <section id="quiz">
+    <h2>Jogo 1: Quiz — Aprendizado espiritual e secular</h2>
+    <div class="question">1. Por que a educação é vital segundo Doutrina e Convênios?</div>
+    <div class="options">
+      <button onclick="checkAnswer(this, true)">Porque nos prepara espiritual e temporalmente para servir melhor.</button>
+      <button onclick="checkAnswer(this, false)">Porque garante apenas sucesso financeiro.</button>
+      <button onclick="checkAnswer(this, false)">Porque substitui a necessidade de revelação espiritual.</button>
+    </div>
+    <div class="feedback"></div>
+
+    <div class="question">2. Qual é o equilíbrio ensinado pelo Senhor?</div>
+    <div class="options">
+      <button onclick="checkAnswer(this, false)">Priorizar só o estudo acadêmico.</button>
+      <button onclick="checkAnswer(this, true)">Buscar conhecimento espiritual e secular em harmonia.</button>
+      <button onclick="checkAnswer(this, false)">Negligenciar um dos dois.</button>
+    </div>
+    <div class="feedback"></div>
+  </section>
+
+  <section id="flashcards">
+    <h2>Jogo 2: Flashcards — Complete a ideia</h2>
+    <p>Clique no cartão para revelar a resposta.</p>
+
+    <div class="flashcard" onclick="toggleCard(this)">
+      <div class="front">"Educação espiritual nos ajuda a ..."</div>
+      <div class="back hidden">... receber revelação e viver o evangelho diariamente.</div>
+    </div>
+
+    <div class="flashcard" onclick="toggleCard(this)">
+      <div class="front">"Educação secular nos capacita a ..."</div>
+      <div class="back hidden">... servir melhor na sociedade e sustentar nossa família.</div>
+    </div>
+
+    <div class="flashcard" onclick="toggleCard(this)">
+      <div class="front">"O Senhor deseja que busquemos ..."</div>
+      <div class="back hidden">... conhecimento de todas as coisas, espirituais e temporais (DyC 88:78–80).</div>
+    </div>
+  </section>
+
+  <script>
+    function checkAnswer(btn, correct){
+      const feedback = btn.parentElement.nextElementSibling;
+      if(correct){
+        feedback.textContent = "✔ Resposta correta!";
+        feedback.className = "feedback correct";
+      } else {
+        feedback.textContent = "✘ Tente novamente.";
+        feedback.className = "feedback wrong";
+      }
+    }
+
+    function toggleCard(card){
+      const front = card.querySelector('.front');
+      const back = card.querySelector('.back');
+      if(back.classList.contains('hidden')){
+        front.classList.add('hidden');
+        back.classList.remove('hidden');
+      } else {
+        back.classList.add('hidden');
+        front.classList.remove('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
