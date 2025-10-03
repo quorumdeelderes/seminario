@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo - Chaves do Sacerdócio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      max-width: 650px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .box {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      display: none;
+    }
+    .tema { background: #eef; }
+    .pergunta { background: #eef; }
+    .resposta { background: #ffe; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎲 Jogo das Chaves do Sacerdócio 🎲</h1>
+    <p><strong>Regras:</strong> Cada jovem rola o dado. Quem tirar o maior número será o <b>entrevistador</b>!</p>
+    <button onclick="rolarDado()">Rolar Dado</button>
+    <p id="resultadoDado"></p>
+
+    <div id="temas" class="box tema"></div>
+    <div id="perguntas" class="box pergunta"></div>
+    <div id="resposta" class="box resposta"></div>
+  </div>
+
+  <script>
+    const temas = {
+      "Restauração do Sacerdócio": [
+        { pergunta: "Quem restaurou o sacerdócio a Joseph Smith?", resposta: "Pedro, Tiago e João restauraram o Sacerdócio de Melquisedeque; João Batista restaurou o Sacerdócio Aarônico." },
+        { pergunta: "Por que foi importante restaurar o sacerdócio?", resposta: "Porque somente com a autoridade do sacerdócio podemos realizar ordenanças válidas como batismo e confirmação." }
+      ],
+      "Templo de Kirtland": [
+        { pergunta: "O que aconteceu no Templo de Kirtland em 1836?", resposta: "O Salvador apareceu e aceitou a casa como Seu templo; Moisés, Elias e outros profetas restauraram chaves importantes." },
+        { pergunta: "Que bênçãos foram derramadas sobre os santos em Kirtland?", resposta: "Eles receberam manifestações espirituais, dons e visões celestiais." }
+      ],
+      "Chaves do Sacerdócio": [
+        { pergunta: "O que são as chaves do sacerdócio?", resposta: "São o direito de presidir e dirigir o uso do sacerdócio na Terra." },
+        { pergunta: "Quem detém todas as chaves do sacerdócio hoje?", resposta: "O Presidente da Igreja, que é o Profeta, Vidente e Revelador." }
+      ]
+    };
+
+    function rolarDado() {
+      let numero = Math.floor(Math.random() * 6) + 1;
+      document.getElementById("resultadoDado").innerText = "Você tirou: " + numero + " → Quem tirar o maior número será o ENTREVISTADOR.";
+      mostrarTemas();
+    }
+
+    function mostrarTemas() {
+      let div = document.getElementById("temas");
+      div.innerHTML = "<h3>🎯 O ENTREVISTADO deve escolher um tema:</h3>";
+      for (let tema in temas) {
+        div.innerHTML += `<button onclick=\"mostrarPerguntas('${tema}')\">${tema}</button>`;
+      }
+      div.style.display = "block";
+    }
+
+    function mostrarPerguntas(tema) {
+      let div = document.getElementById("perguntas");
+      div.innerHTML = `<h3>📌 Tema escolhido: ${tema}<br>Agora o ENTREVISTADOR deve escolher a pergunta:</h3>`;
+      temas[tema].forEach((q, i) => {
+        div.innerHTML += `<button onclick=\"mostrarPergunta('${tema}', ${i})\">${q.pergunta}</button><br>`;
+      });
+      div.style.display = "block";
+      document.getElementById("resposta").style.display = "none";
+    }
+
+    function mostrarPergunta(tema, i) {
+      let div = document.getElementById("perguntas");
+      div.innerHTML = `<h3>❓ Pergunta:</h3><p>${temas[tema][i].pergunta}</p>`;
+      div.innerHTML += `<button onclick=\"mostrarResposta('${tema}', ${i})\">Mostrar Resposta / Citação</button>`;
+      document.getElementById("resposta").style.display = "none";
+    }
+
+    function mostrarResposta(tema, i) {
+      let div = document.getElementById("resposta");
+      div.innerHTML = `<h3>💡 Resposta/Citação:</h3><p>${temas[tema][i].resposta}</p>`;
+      div.style.display = "block";
+    }
+  </script>
+</body>
+</html>
